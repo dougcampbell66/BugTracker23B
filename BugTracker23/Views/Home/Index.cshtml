@@ -13,7 +13,15 @@
 
 <div class="row">
     <div class="col-md-4">
-        <h2>Hello @userHelper.LastNameFirst(User.Identity.GetUserId())</h2>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <h2>Hello @userHelper.LastNameFirst(User.Identity.GetUserId())</h2>
+        }
+        else
+        {
+            <h2>PLEASE LOG IN TO VISIT YOUR DASHBOARD</h2>
+        }
+
         <p>
             ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
             enables a clean separation of concerns and gives you full control over markup
