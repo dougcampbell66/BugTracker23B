@@ -60,13 +60,13 @@ namespace BugTracker23.Helpers
             var user = db.Users.Find(userId);
             return project.Users.Contains(user);
         }
-        //public List<Project> ListUserProjects (string userId)
-        ////{
-        ////    var user = db.Users.Find(userId);
-        ////    var resultList = new List<Project>();
-        ////    resultList.AddRange(user.Projects);
-        ////    return resultList; 
-        ////}
+        public List<Project> ListUserProjects(string userId)
+        {
+            var user = db.Users.Find(userId);
+            var resultList = new List<Project>();
+            resultList.AddRange(user.Projects);
+            return resultList;
+        }
 
     }
 }

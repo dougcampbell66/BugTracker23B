@@ -16,6 +16,8 @@ namespace BugTracker23.Models
         public int TicketTypeId { get; set; }
         public string SubmitterId { get; set; }
         public string DeveloperId { get; set; }
+        public virtual ApplicationUser Submitter { get; set; }
+        public virtual ApplicationUser Developer { get; set; }
         public virtual Project Project { get; set; }
         public virtual TicketType TicketType { get; set; }
         public virtual TicketStatus TicketStatus { get; set; }
@@ -43,6 +45,7 @@ namespace BugTracker23.Models
         public DateTime? Updated { get; set; }
         public bool IsResolved { get; set; }
         public bool IsArchived { get; set; }
+
         #endregion
 
         #region Constructor
