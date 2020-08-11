@@ -279,6 +279,8 @@
     <Content Include="Views\Account\ConfirmationSent.cshtml" />
     <Content Include="Views\Assignments\Index.cshtml" />
     <Content Include="Views\Assignments\ManageRoles.cshtml" />
+    <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\Users\ManageUserRole.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -289,7 +291,6 @@
     <Folder Include="Views\TicketPriority\" />
     <Folder Include="Views\TicketStatus\" />
     <Folder Include="Views\TicketType\" />
-    <Folder Include="Views\Users\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
