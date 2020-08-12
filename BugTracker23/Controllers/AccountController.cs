@@ -10,11 +10,11 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BugTracker23.Models;
 using System.Runtime.InteropServices;
-
+using System.Net.Mail;
 
 namespace BugTracker23.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class AccountController : Controller
     {
         private ApplicationSignInManager _signInManager;
@@ -54,7 +54,6 @@ namespace BugTracker23.Controllers
             }
         }
 
-        //
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
@@ -63,7 +62,6 @@ namespace BugTracker23.Controllers
             return View(new LoginViewModel());
         }
 
-        //
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
@@ -93,7 +91,6 @@ namespace BugTracker23.Controllers
             }
         }
 
-        //
         // GET: /Account/VerifyCode
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
@@ -106,7 +103,6 @@ namespace BugTracker23.Controllers
             return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
-        //
         // POST: /Account/VerifyCode
         [HttpPost]
         [AllowAnonymous]
@@ -136,7 +132,6 @@ namespace BugTracker23.Controllers
             }
         }
 
-        //
         // GET: /Account/Register
         [AllowAnonymous]
         public ActionResult Register()
@@ -144,37 +139,54 @@ namespace BugTracker23.Controllers
             return View();
         }
 
-        //
-        //// POST: /Account/Register
-        //[HttpPost]
-        //[AllowAnonymous]
-        //[ValidateAntiForgeryToken]
-        //public async Task<ActionResult> Register(RegisterViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-        //        var result = await UserManager.CreateAsync(user, model.Password);
-        //        if (result.Succeeded)
-        //        {
-        //            await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+        // POST: /Account/Register
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var result = await UserManager.CreateAsync(user, model.Password);
 
-        //            // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-        //            // Send an email with this link
-        //            string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-        //            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-        //            await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                if (result.Succeeded)
+                {
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
-        //            return RedirectToAction("Index", "Home");
-        //        }
-        //        AddErrors(result);
-        //    }
+                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+                    // Send an email with this link
+                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: Request.Url.Scheme);
+                    try
+                    {
+                        var from = "BugTracker23<admin@bugtracker23.com>";             
+                        var email = new MailMessage(from, model.Email)
+                        {
+                            Subject = "Confirm your account",
+                            Body = "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>",
+                            IsBodyHtml = true
+                        };
+                        var svc = new EmailService();
+                        await svc.SendAsync(email);
 
-        //    // If we got this far, something failed, redisplay form
-        //    return View(model);
-        //}
+                        //return View("EmailConfirm");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        await Task.FromResult(0);
+                    }
 
-        //
+                     return RedirectToAction("Index", "Home");
+                }
+                AddErrors(result);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
         // GET: /Account/ConfirmEmail
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
@@ -186,6 +198,7 @@ namespace BugTracker23.Controllers
             var result = await UserManager.ConfirmEmailAsync(userId, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
+        #region Resend Email Confirmation
         [AllowAnonymous]
         public ActionResult ResendEmailConfirmaiton()
         {
@@ -211,8 +224,8 @@ namespace BugTracker23.Controllers
         {
             return View();
         }
+        #endregion
 
-        //
         // GET: /Account/ForgotPassword
         [AllowAnonymous]
         public ActionResult ForgotPassword()
@@ -220,7 +233,6 @@ namespace BugTracker23.Controllers
             return View();
         }
 
-        //
         // POST: /Account/ForgotPassword
         [HttpPost]
         [AllowAnonymous]
@@ -248,7 +260,6 @@ namespace BugTracker23.Controllers
             return View(model);
         }
 
-        //
         // GET: /Account/ForgotPasswordConfirmation
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
@@ -256,7 +267,6 @@ namespace BugTracker23.Controllers
             return View();
         }
 
-        //
         // GET: /Account/ResetPassword
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
@@ -264,7 +274,6 @@ namespace BugTracker23.Controllers
             return code == null ? View("Error") : View();
         }
 
-        //
         // POST: /Account/ResetPassword
         [HttpPost]
         [AllowAnonymous]
@@ -290,7 +299,6 @@ namespace BugTracker23.Controllers
             return View();
         }
 
-        //
         // GET: /Account/ResetPasswordConfirmation
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
@@ -298,7 +306,6 @@ namespace BugTracker23.Controllers
             return View();
         }
 
-        //
         // POST: /Account/ExternalLogin
         [HttpPost]
         [AllowAnonymous]
@@ -309,7 +316,6 @@ namespace BugTracker23.Controllers
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
 
-        //
         // GET: /Account/SendCode
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
@@ -323,39 +329,6 @@ namespace BugTracker23.Controllers
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
             return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
-    //   //Resending the Email Confirmation
-    //    #region
-    //    [HttpGet]
-    //    [AllowAnonymous]
-
-    //    public ActionResult ResendEmailConfirmation()
-    //    {
-    //        return View();
-    //    }
-    //    [HttpPost]
-    //    [AllowAnonymous]
-    //    [ValidateAntiForgeryToken]
-
-    //    public async Task<ActionResult> ResendEmailConfirmation(ForgotPasswordViewModel model)
-    //    {
-    //        var user = await UserManager.FindByNameAsync(model.Email);
-    //        if (user != null)
-    //        {
-    //            string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-    //            var callbackUrl = Url.Action("ConfirmEmail", "Account",
-    //                new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-    //            await UserManager.SendEmailAsync(user.Id, "Confirm your account",
-    //                "Please confirm your account by clicking < a href=\"" + callbackUrl + "\">here</a>");
-    //        }
-    //        return RedirectToAction("ConfirmationSent");
-    //    }
-    //    public ActionResult ConfirmationSent()
-    //    {
-    //        return View();
-    //    }
-
-    //}
-        //
         // POST: /Account/SendCode
         [HttpPost]
         [AllowAnonymous]
@@ -375,7 +348,6 @@ namespace BugTracker23.Controllers
             return RedirectToAction("VerifyCode", new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
 
-        //
         // GET: /Account/ExternalLoginCallback
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
@@ -405,7 +377,6 @@ namespace BugTracker23.Controllers
             }
         }
 
-        //
         // POST: /Account/ExternalLoginConfirmation
         [HttpPost]
         [AllowAnonymous]
@@ -443,7 +414,6 @@ namespace BugTracker23.Controllers
             return View(model);
         }
 
-        //
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -453,7 +423,6 @@ namespace BugTracker23.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        //
         // GET: /Account/ExternalLoginFailure
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure()
@@ -516,7 +485,6 @@ namespace BugTracker23.Controllers
                 : this(provider, redirectUri, null)
             {
             }
-
             public ChallengeResult(string provider, string redirectUri, string userId)
             {
                 LoginProvider = provider;

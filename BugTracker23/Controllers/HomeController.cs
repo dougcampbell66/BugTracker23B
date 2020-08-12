@@ -59,3 +59,4 @@ namespace BugTracker23.Controllers
         }
     }
 }
+
