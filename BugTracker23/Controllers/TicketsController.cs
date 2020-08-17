@@ -26,10 +26,39 @@ namespace BugTracker23.Controllers
             var tickets = db.Tickets.Include(t => t.Developer).Include(t => t.Project).Include(t => t.Submitter).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
             return View(tickets.ToList());
         }
+        //Added on 8/13/2020 with Drew - Viewing Tickets by Project
+        public ActionResult GetProjectTickets()
+        {
+            var userId = User.Identity.GetUserId();
+            var user = db.Users.Find(userId);
+            var ticketList = new List<Ticket>();
+            ticketList = user.Projects.SelectMany(p => p.Tickets).ToList();
+            return View("Index", ticketList);
+        }
+        //Added on 8/13/2020 with Drew - Viewing MyTickets by Project
+        public ActionResult GetMyTickets()
+        {
+            var userId = User.Identity.GetUserId();
+            var ticketList = new List<Ticket>();
+            if (User.IsInRole("Developer"))
+            {
+                ticketList = db.Tickets.Where(t => t.DeveloperId == userId).ToList();
+                return View("Index", ticketList);
+            }
+            if (User.IsInRole("Submitter"))
+            {
+                ticketList = db.Tickets.Where(t => t.DeveloperId == userId).ToList();
+                return View("Index", ticketList);
+            }
+            else
+            {
+                return RedirectToAction("GetProjectTickets");
+            }
+        }
 
         // GET: Tickets/Details/5
-        //[Authorize(Roles = "Submitter")]
-        public ActionResult Details(int? id)
+        [Authorize(Roles = "Submitter")]
+        public ActionResult Dashboard(int? id)
         {
             if (id == null)
             {
@@ -44,7 +73,7 @@ namespace BugTracker23.Controllers
         }
 
         // GET: Tickets/Create
-        //[Authorize(Roles = "Submitter")]
+        [Authorize(Roles = "Submitter")]
         public ActionResult Create()
         {
 
@@ -63,7 +92,7 @@ namespace BugTracker23.Controllers
         // POST: Tickets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        //[Authorize(Roles = "Submitter")]
+        [Authorize(Roles = "Submitter")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,SubmitterId,DeveloperId,Title,Description,Created,Updated,IsResolved,IsArchived")] Ticket ticket)

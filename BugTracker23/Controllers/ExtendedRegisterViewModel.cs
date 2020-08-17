@@ -1,6 +1,9 @@
-﻿namespace BugTracker23.Controllers
+﻿using System.Web.Mvc;
+
+namespace BugTracker23.Controllers
 {
     public class ExtendedRegisterViewModel
+
     {
         internal string LastName;
 
@@ -9,4 +12,5 @@
         public string FirstName { get; internal set; }
         public string DisplayName { get; internal set; }
     }
+    
 }

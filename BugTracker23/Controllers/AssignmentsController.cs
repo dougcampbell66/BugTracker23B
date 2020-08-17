@@ -14,7 +14,7 @@ namespace BugTracker23.Controllers
         private RoleHelper roleHelper = new RoleHelper();
         private ProjectHelper projectHelper = new ProjectHelper();
         //GET: Assignments
-        //[Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator")]
         #region Role Assignments        
         public ActionResult ManageRoles()
         {
@@ -25,6 +25,7 @@ namespace BugTracker23.Controllers
             ViewBag.RoleName = new SelectList(db.Roles.Where(r => r.Name != "Administrator"), "Name", "Name");
             return View(db.Users.ToList());
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult ManageRoles(List<string> userIds, string roleName)

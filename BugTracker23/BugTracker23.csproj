@@ -173,8 +173,8 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
-    <Compile Include="Controllers\TicketAttachmentController.cs" />
-    <Compile Include="Controllers\TicketCommentController.cs" />
+    <Compile Include="Controllers\TicketAttachmentsController.cs" />
+    <Compile Include="Controllers\TicketCommentsController.cs" />
     <Compile Include="Controllers\TicketHistoryController.cs" />
     <Compile Include="Controllers\TicketNotificationController.cs" />
     <Compile Include="Controllers\TicketPriorityController.cs" />
@@ -185,10 +185,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\FileUploadValidator.cs" />
     <Compile Include="Helpers\ImageUploadValidator.cs" />
     <Compile Include="Helpers\ProjectHelper.cs" />
     <Compile Include="Helpers\RoleHelper.cs" />
     <Compile Include="Helpers\StringUtilities.cs" />
+    <Compile Include="Helpers\TicketHelper.cs" />
     <Compile Include="Helpers\TicketManager.cs" />
     <Compile Include="Helpers\UserHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
@@ -282,11 +284,20 @@
     <Content Include="Views\Assignments\ManageRoles.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Users\ManageUserRole.cshtml" />
+    <Content Include="Views\TicketComments\Create.cshtml" />
+    <Content Include="Views\TicketComments\Delete.cshtml" />
+    <Content Include="Views\TicketComments\Details.cshtml" />
+    <Content Include="Views\TicketComments\Edit.cshtml" />
+    <Content Include="Views\TicketComments\Index.cshtml" />
+    <Content Include="Views\Tickets\Dashboard.cshtml" />
+    <Content Include="Views\TicketAttachments\Create.cshtml" />
+    <Content Include="Views\TicketAttachments\Delete.cshtml" />
+    <Content Include="Views\TicketAttachments\Details.cshtml" />
+    <Content Include="Views\TicketAttachments\Edit.cshtml" />
+    <Content Include="Views\TicketAttachments\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\TicketAttachment\" />
-    <Folder Include="Views\TicketComment\" />
     <Folder Include="Views\TicketHistory\" />
     <Folder Include="Views\TicketNotification\" />
     <Folder Include="Views\TicketPriority\" />

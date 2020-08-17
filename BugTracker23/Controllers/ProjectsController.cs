@@ -39,7 +39,8 @@ namespace BugTracker23.Controllers
         [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Create()
         {
-            return View();
+            var model = new Project();
+            return View(model);
         }
 
         // POST: Projects/Create
