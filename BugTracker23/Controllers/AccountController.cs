@@ -11,7 +11,6 @@ using Microsoft.Owin.Security;
 using BugTracker23.Models;
 using System.Runtime.InteropServices;
 using System.Net.Mail;
-
 namespace BugTracker23.Controllers
 {
     [Authorize]
@@ -143,45 +142,45 @@ namespace BugTracker23.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(ExtendedRegisterViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
+            //if (ModelState.IsValid)
+            //{
+            //    var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+            //    var result = await UserManager.CreateAsync(user, model.Password);
 
-                if (result.Succeeded)
-                {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+            //    if (result.Succeeded)
+            //    {
+            //        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: Request.Url.Scheme);
-                    try
-                    {
-                        var from = "BugTracker23<admin@bugtracker23.com>";             
-                        var email = new MailMessage(from, model.Email)
-                        {
-                            Subject = "Confirm your account",
-                            Body = "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>",
-                            IsBodyHtml = true
-                        };
-                        var svc = new EmailService();
-                        await svc.SendAsync(email);
+            //        // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+            //        // Send an email with this link
+            //        string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+            //        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: Request.Url.Scheme);
+            //        try
+            //        {
+            //            var from = "BugTracker23<admin@bugtracker23.com>";             
+            //            var email = new MailMessage(from, model.Email)
+            //            {
+            //                Subject = "Confirm your account",
+            //                Body = "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>",
+            //                IsBodyHtml = true
+            //            };
+            //            var svc = new EmailService();
+            //            await svc.SendAsync(email);
 
-                        //return View("EmailConfirm");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        await Task.FromResult(0);
-                    }
+            //            //return View("EmailConfirm");
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            Console.WriteLine(ex.Message);
+            //            await Task.FromResult(0);
+            //        }
 
-                     return RedirectToAction("Index", "Home");
-                }
-                AddErrors(result);
-            }
+            //         return RedirectToAction("Index", "Home");
+            //    }
+            //    AddErrors(result);
+            //}
 
             // If we got this far, something failed, redisplay form
             return View(model);

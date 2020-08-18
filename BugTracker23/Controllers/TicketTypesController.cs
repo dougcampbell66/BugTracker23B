@@ -10,119 +10,107 @@ using BugTracker23.Models;
 
 namespace BugTracker23.Controllers
 {
-    public class TicketCommentsController : Controller
+    public class TicketTypesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: TicketComments
+        // GET: TicketTypes
         public ActionResult Index()
         {
-            var ticketComments = db.TicketComments.Include(t => t.Ticket).Include(t => t.User);
-            return View(ticketComments.ToList());
+            return View(db.TicketTypes.ToList());
         }
 
-        // GET: TicketComments/Details/5
+        // GET: TicketTypes/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TicketComment ticketComment = db.TicketComments.Find(id);
-            if (ticketComment == null)
+            TicketType ticketType = db.TicketTypes.Find(id);
+            if (ticketType == null)
             {
                 return HttpNotFound();
             }
-            return View(ticketComment);
+            return View(ticketType);
         }
 
-        // GET: TicketComments/Create
-        [Authorize(Roles = "Administrator")]
+        // GET: TicketTypes/Create
         public ActionResult Create()
         {
-            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId");
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName");
             return View();
         }
 
-        // POST: TicketComments/Create
+        // POST: TicketTypes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,TicketId,UserId,Comment,Created")] TicketComment ticketComment)
+        public ActionResult Create([Bind(Include = "Id,Name")] TicketType ticketType)
         {
             if (ModelState.IsValid)
             {
-                db.TicketComments.Add(ticketComment);
+                db.TicketTypes.Add(ticketType);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId", ticketComment.TicketId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", ticketComment.UserId);
-            return View(ticketComment);
+            return View(ticketType);
         }
 
-        // GET: TicketComments/Edit/5
-        [Authorize(Roles = "Administrator")]
+        // GET: TicketTypes/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TicketComment ticketComment = db.TicketComments.Find(id);
-            if (ticketComment == null)
+            TicketType ticketType = db.TicketTypes.Find(id);
+            if (ticketType == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId", ticketComment.TicketId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", ticketComment.UserId);
-            return View(ticketComment);
+            return View(ticketType);
         }
 
-        // POST: TicketComments/Edit/5
+        // POST: TicketTypes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,TicketId,UserId,Comment,Created")] TicketComment ticketComment)
+        public ActionResult Edit([Bind(Include = "Id,Name")] TicketType ticketType)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(ticketComment).State = EntityState.Modified;
+                db.Entry(ticketType).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId", ticketComment.TicketId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", ticketComment.UserId);
-            return View(ticketComment);
+            return View(ticketType);
         }
 
-        // GET: TicketComments/Delete/5
-        [Authorize(Roles = "Administrator")]
+        // GET: TicketTypes/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TicketComment ticketComment = db.TicketComments.Find(id);
-            if (ticketComment == null)
+            TicketType ticketType = db.TicketTypes.Find(id);
+            if (ticketType == null)
             {
                 return HttpNotFound();
             }
-            return View(ticketComment);
+            return View(ticketType);
         }
 
-        // POST: TicketComments/Delete/5
+        // POST: TicketTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            TicketComment ticketComment = db.TicketComments.Find(id);
-            db.TicketComments.Remove(ticketComment);
+            TicketType ticketType = db.TicketTypes.Find(id);
+            db.TicketTypes.Remove(ticketType);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

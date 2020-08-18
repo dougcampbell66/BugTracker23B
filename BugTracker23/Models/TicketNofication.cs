@@ -16,6 +16,7 @@ namespace BugTracker23.Models
         #endregion
         #region Actual Property
         public string Message { get; set; }
+        public string Subject { get; set; }
         public DateTime Created { get; set; }
         public bool IsRead { get; set; }
         #endregion

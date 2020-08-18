@@ -61,11 +61,12 @@ namespace BugTracker23.Controllers
 
             return View(project);
         }
+        ////Project Wizard View Model
         //public ActionResult ProjectWizard()
         //{
         //    ViewBag.ProjectManagerId = new SelectList(roleHelper.UsersinRole("Project Manager"), "Id", "FullName");
-        //    ViewBag.DeveloperIds = new MultiSelectList(roleHelper.UsersinRole("Developer", "Id", "FullName");
-        //    ViewBag.SubmitterIds = new MultiSelectList(roleHelper.UsersinRole("Submitter", "Id", "FullName");
+        //    ViewBag.DeveloperIds = new MultiSelectList(roleHelper.UsersinRole("Developer", "Id", "FullName"));
+        //    ViewBag.SubmitterIds = new MultiSelectList(roleHelper.UsersinRole("Submitter", "Id", "FullName"));
         //    ViewBag.Errors = "";
         //    var model = new ProjectWizardVM();
         //    return View(model);
@@ -88,7 +89,7 @@ namespace BugTracker23.Controllers
         //    {
         //        ViewBag.Errors += "<p>You must select a Submitter</p>";
         //    }
-        //    if ViewBag.Erros.Length > 0
+        //    if ViewBag.Errors.Length > 0
         //}
 
         // GET: Projects/Edit/5
@@ -117,6 +118,8 @@ namespace BugTracker23.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(project).State = EntityState.Modified;
+
+                
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

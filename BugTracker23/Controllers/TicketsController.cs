@@ -19,6 +19,7 @@ namespace BugTracker23.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
         private ProjectHelper projectHelper = new ProjectHelper();
         private RoleHelper roleHelper = new RoleHelper();
+        private TicketHelper ticketHelper = new TicketHelper();
 
         // GET: Tickets
         public ActionResult Index()
@@ -57,7 +58,7 @@ namespace BugTracker23.Controllers
         }
 
         // GET: Tickets/Details/5
-        [Authorize(Roles = "Submitter")]
+        [Authorize(Roles = "Administrator, Submitter")]
         public ActionResult Dashboard(int? id)
         {
             if (id == null)
@@ -92,7 +93,7 @@ namespace BugTracker23.Controllers
         // POST: Tickets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Submitter")]
+        [Authorize(Roles = "Administrator, Submitter")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,SubmitterId,DeveloperId,Title,Description,Created,Updated,IsResolved,IsArchived")] Ticket ticket)
@@ -142,16 +143,26 @@ namespace BugTracker23.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,SubmitterId,DeveloperId,Title,Description,Created,Updated,IsResolved,IsArchived")] Ticket ticket)
         {
+
+            //Memento Object - I need to go out to the DB and grab the Ticket in its current state in order to compare it to the ticket being submitted from the form.
+
+
+
+
             if (ModelState.IsValid)
             {
-                ticket.Updated = DateTime.Now;
+                //Go out and get an unedited copy of the ticket from the DB
+                var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();
+
+                //Somehow compare my old Ticket with the new Ticket to make any number of decisions that might be required;
+                var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
+                ticketHelper.ManageTicketNotifications(oldTicket, newTicket);
                 return RedirectToAction("Index");
             }
+
             ViewBag.DeveloperId = new SelectList(db.Users, "Id", "FirstName", ticket.DeveloperId);
-            ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", ticket.ProjectId);
-            ViewBag.SubmitterId = new SelectList(db.Users, "Id", "FirstName", ticket.SubmitterId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatus, "Id", "Name", ticket.TicketStatusId);
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);

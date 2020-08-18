@@ -10,34 +10,33 @@ using BugTracker23.Models;
 
 namespace BugTracker23.Controllers
 {
-    public class TicketCommentsController : Controller
+    public class TicketHistoriesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: TicketComments
+        // GET: TicketHistories
         public ActionResult Index()
         {
-            var ticketComments = db.TicketComments.Include(t => t.Ticket).Include(t => t.User);
-            return View(ticketComments.ToList());
+            var ticketHistories = db.TicketHistories.Include(t => t.Ticket).Include(t => t.User);
+            return View(ticketHistories.ToList());
         }
 
-        // GET: TicketComments/Details/5
+        // GET: TicketHistories/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TicketComment ticketComment = db.TicketComments.Find(id);
-            if (ticketComment == null)
+            TicketHistory ticketHistory = db.TicketHistories.Find(id);
+            if (ticketHistory == null)
             {
                 return HttpNotFound();
             }
-            return View(ticketComment);
+            return View(ticketHistory);
         }
 
-        // GET: TicketComments/Create
-        [Authorize(Roles = "Administrator")]
+        // GET: TicketHistories/Create
         public ActionResult Create()
         {
             ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId");
@@ -45,84 +44,82 @@ namespace BugTracker23.Controllers
             return View();
         }
 
-        // POST: TicketComments/Create
+        // POST: TicketHistories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,TicketId,UserId,Comment,Created")] TicketComment ticketComment)
+        public ActionResult Create([Bind(Include = "Id,TicketId,UserId,Property,OldValue,NewValue,Updated")] TicketHistory ticketHistory)
         {
             if (ModelState.IsValid)
             {
-                db.TicketComments.Add(ticketComment);
+                db.TicketHistories.Add(ticketHistory);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId", ticketComment.TicketId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", ticketComment.UserId);
-            return View(ticketComment);
+            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId", ticketHistory.TicketId);
+            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", ticketHistory.UserId);
+            return View(ticketHistory);
         }
 
-        // GET: TicketComments/Edit/5
-        [Authorize(Roles = "Administrator")]
+        // GET: TicketHistories/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TicketComment ticketComment = db.TicketComments.Find(id);
-            if (ticketComment == null)
+            TicketHistory ticketHistory = db.TicketHistories.Find(id);
+            if (ticketHistory == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId", ticketComment.TicketId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", ticketComment.UserId);
-            return View(ticketComment);
+            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId", ticketHistory.TicketId);
+            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", ticketHistory.UserId);
+            return View(ticketHistory);
         }
 
-        // POST: TicketComments/Edit/5
+        // POST: TicketHistories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,TicketId,UserId,Comment,Created")] TicketComment ticketComment)
+        public ActionResult Edit([Bind(Include = "Id,TicketId,UserId,Property,OldValue,NewValue,Updated")] TicketHistory ticketHistory)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(ticketComment).State = EntityState.Modified;
+                db.Entry(ticketHistory).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId", ticketComment.TicketId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", ticketComment.UserId);
-            return View(ticketComment);
+            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId", ticketHistory.TicketId);
+            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", ticketHistory.UserId);
+            return View(ticketHistory);
         }
 
-        // GET: TicketComments/Delete/5
-        [Authorize(Roles = "Administrator")]
+        // GET: TicketHistories/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TicketComment ticketComment = db.TicketComments.Find(id);
-            if (ticketComment == null)
+            TicketHistory ticketHistory = db.TicketHistories.Find(id);
+            if (ticketHistory == null)
             {
                 return HttpNotFound();
             }
-            return View(ticketComment);
+            return View(ticketHistory);
         }
 
-        // POST: TicketComments/Delete/5
+        // POST: TicketHistories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            TicketComment ticketComment = db.TicketComments.Find(id);
-            db.TicketComments.Remove(ticketComment);
+            TicketHistory ticketHistory = db.TicketHistories.Find(id);
+            db.TicketHistories.Remove(ticketHistory);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

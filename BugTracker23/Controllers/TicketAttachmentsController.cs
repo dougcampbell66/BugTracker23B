@@ -38,6 +38,7 @@ namespace BugTracker23.Controllers
         }
 
         // GET: TicketAttachments/Create
+        [Authorize(Roles = "Administrator")]
         public ActionResult Create()
         {
             ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId");
@@ -68,6 +69,7 @@ namespace BugTracker23.Controllers
         }
 
         // GET: TicketAttachments/Edit/5
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -103,6 +105,7 @@ namespace BugTracker23.Controllers
         }
 
         // GET: TicketAttachments/Delete/5
+        [Authorize(Roles = "Administrator")]
         public ActionResult Delete(int? id)
         {
             if (id == null)

@@ -3,6 +3,7 @@ using BugTracker23.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System;
 
 //Created on 8/13 via Drew; 
 
@@ -67,6 +68,31 @@ namespace BugTracker23.Helpers
                     return false;
             }
         }
+
+        public void ManageTicketNotifications(Ticket oldTicket, Ticket newTicket)
+        {
+            if (oldTicket.DeveloperId != newTicket.DeveloperId && newTicket.DeveloperId != null)
+            {
+                //I have determined that this particular change requires a notification
+                var notification = new TicketNotification()
+                {
+                    TicketId = newTicket.Id,
+                    UserId = newTicket.DeveloperId,
+                    Created = DateTime.Now,
+                    Subject = $"You have been assigned Ticket Id: { newTicket.Id}",
+                    Message = $"Heads up{newTicket.Developer.FullName}, you have been assigned a "
+
+                };
+
+                db.TicketNotifications.Add(notification);
+                db.SaveChanges();
+
+
+
+            }
+        }
+
+
 
 
 
