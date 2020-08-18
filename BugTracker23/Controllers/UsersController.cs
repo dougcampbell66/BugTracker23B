@@ -43,11 +43,6 @@ namespace BugTracker23.Controllers
 
 
 
-            //Code in here looks very similar to the code we've already seen;
-          //I need to remove all roles from this suer and add back the chosen role
-
-
-
 
 
 

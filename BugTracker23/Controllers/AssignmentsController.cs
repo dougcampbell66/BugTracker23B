@@ -63,10 +63,6 @@ namespace BugTracker23.Controllers
 
             return View(db.Users.ToList());
 
-
-
-
-            return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

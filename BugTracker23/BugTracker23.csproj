@@ -185,6 +185,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\FileUploadValidator.cs" />
+    <Compile Include="Helpers\HelpersHelper.cs" />
+    <Compile Include="Helpers\HistoryHelper.cs" />
     <Compile Include="Helpers\ImageUploadValidator.cs" />
     <Compile Include="Helpers\ProjectHelper.cs" />
     <Compile Include="Helpers\RoleHelper.cs" />

@@ -19,7 +19,7 @@ namespace BugTracker23.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
         private ProjectHelper projectHelper = new ProjectHelper();
         private RoleHelper roleHelper = new RoleHelper();
-        private TicketHelper ticketHelper = new TicketHelper();
+        //private TicketHelper ticketHelper = new TicketHelper();
 
         // GET: Tickets
         public ActionResult Index()
@@ -143,26 +143,22 @@ namespace BugTracker23.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,SubmitterId,DeveloperId,Title,Description,Created,Updated,IsResolved,IsArchived")] Ticket ticket)
         {
-
-            //Memento Object - I need to go out to the DB and grab the Ticket in its current state in order to compare it to the ticket being submitted from the form.
-
-
-
-
             if (ModelState.IsValid)
-            {
-                //Go out and get an unedited copy of the ticket from the DB
-                var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
-                db.Entry(ticket).State = EntityState.Modified;
-                db.SaveChanges();
+            //{
+            //    //Go out and get an unedited copy of the ticket from the DB
+            //    var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
+            //    db.Entry(ticket).State = EntityState.Modified;
+            //    db.SaveChanges();
+            //    var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
+            //    ticketHelper.EditedTicket(oldTicket, newTicket);
+            //    return RedirectToAction("Index");
 
-                //Somehow compare my old Ticket with the new Ticket to make any number of decisions that might be required;
-                var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
-                ticketHelper.ManageTicketNotifications(oldTicket, newTicket);
-                return RedirectToAction("Index");
-            }
-
-            ViewBag.DeveloperId = new SelectList(db.Users, "Id", "FirstName", ticket.DeveloperId);
+            //    //Somehow compare my old Ticket with the new Ticket to make any number of decisions that might be required;
+            //    var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
+            //    ticketHelper.ManageTicketNotifications(oldTicket, newTicket);
+            //    return RedirectToAction("Index");
+            //}
+            ViewBag.ProjectId = new SelectList(db.Users, "Id", "FirstName", ticket.DeveloperId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatus, "Id", "Name", ticket.TicketStatusId);
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
