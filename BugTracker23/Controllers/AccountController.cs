@@ -12,6 +12,7 @@ using BugTracker23.Models;
 using System.Runtime.InteropServices;
 using System.Net.Mail;
 namespace BugTracker23.Controllers
+
 {
     [Authorize]
     public class AccountController : Controller
@@ -158,13 +159,15 @@ namespace BugTracker23.Controllers
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code }, protocol: Request.Url.Scheme);
                     try
                     {
-                        var from = "BugTracker23<admin@bugtracker23.com>";
+                        var from = "Bug Tracker<admin@bugtracker23.com>";
+
                         var email = new MailMessage(from, model.Email)
                         {
                             Subject = "Confirm your account",
                             Body = "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>",
                             IsBodyHtml = true
                         };
+
                         var svc = new EmailService();
                         await svc.SendAsync(email);
 
@@ -196,6 +199,7 @@ namespace BugTracker23.Controllers
             var result = await UserManager.ConfirmEmailAsync(userId, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
+        //Resend Email Confirmation
         #region Resend Email Confirmation
         [AllowAnonymous]
         public ActionResult ResendEmailConfirmaiton()
@@ -213,8 +217,28 @@ namespace BugTracker23.Controllers
             if (user != null)
             {
                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                try
+                {
+                    var from = "Bug Tracker<admin@bugtracker23.com>";
+
+                    var email = new MailMessage(from, model.Email)
+                    {
+                        Subject = "Confirm your account",
+                        Body = "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>",
+                        IsBodyHtml = true
+                    };
+
+                    var svc = new EmailService();
+                    await svc.SendAsync(email);
+
+                    //return View("EmailConfirm");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    await Task.FromResult(0);
+                }
             }
             return RedirectToAction("ConfirmationSent");
         }
@@ -250,7 +274,26 @@ namespace BugTracker23.Controllers
                 // Send an email with this link
                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                try
+                {
+                    var from = "Bug Tracker<admin@bugtracker23.com>";
+                    var email = new MailMessage(from, model.Email)
+                    {
+                        Subject = "Reset Password",
+                        Body = "Please reset your password <a href=\"" + callbackUrl + "\">here</a>",
+                        IsBodyHtml = true
+                    };
+
+                    var svc = new EmailService();
+                    await svc.SendAsync(email);
+
+                    //return View("EmailConfirm");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    await Task.FromResult(0);
+                }
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 

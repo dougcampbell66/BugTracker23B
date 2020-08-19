@@ -36,7 +36,7 @@ namespace BugTracker23.Controllers
                 {
                     var body = "<p>Email From: <bold>{0}</bold>({1})</p><p>Message:</p><p>{2}</p>";
                     var from = "Bug Tracker<douglascampbell66@gmail.com>";
-                    model.Body = "This is a message from your Bug Tracker. The name and the email of this site is above.";
+                    model.Body = "This is a message from Bug Tracker. The name and the email of this site is above.";
 
                     var email = new MailMessage(from, ConfigurationManager.AppSettings["emailto"])
                     {
@@ -47,7 +47,7 @@ namespace BugTracker23.Controllers
                     var svc = new EmailService();
                     await svc.SendAsync(email);
 
-                    return View(new EmailModel());
+                    return View("EmailConfirm");
                 }
                 catch (Exception ex)
                 {
