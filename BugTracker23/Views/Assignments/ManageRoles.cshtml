@@ -4,11 +4,12 @@
 @{
     ViewBag.Title = "ManageRoles";
     var roleHelper = new RoleHelper();
+    var projectHelper = new ProjectHelper();
 }
 
 <style>
     #UserIds {
-        min-height: 350px;
+        min-height: 250px;
     }
 </style>
 
@@ -42,17 +43,34 @@
         <th>
             @Html.DisplayName("Role")
         </th>
+        @*<th>
+            @Html.DisplayName("Projects")
+        </th>*@
+
     </tr>
 
     @foreach (var person in Model)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => person.Email)
-            </td>
-            <td>
-                @roleHelper.ListUserRoles(person.Id).FirstOrDefault()
-            </td>
-        </tr>
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => person.Email)
+    </td>
+    <td>
+        @roleHelper.ListUserRoles(person.Id).FirstOrDefault()
+    </td>
+    <!--<td>
+        @projectHelper.ListUserProjects(person.Id).FirstOrDefault()
+
+
+    </td>-->
+    @*<td>
+        @foreach (var project in projHelper.ListUserProjects(user.Id))
+        {
+            @project.Name <br />
+        }
+
+    </td>*@
+
+</tr>
     }
 </table>

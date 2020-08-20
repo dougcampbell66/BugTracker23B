@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -57,6 +58,11 @@ namespace BugTracker23.Helpers
                     resultList.Add(user);
             }
             return resultList;
+        }
+
+        internal IEnumerable UsersInRole(string v1, string v2, string v3)
+        {
+            throw new NotImplementedException();
         }
     }
 }

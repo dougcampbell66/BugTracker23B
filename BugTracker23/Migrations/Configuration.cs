@@ -291,8 +291,77 @@ namespace BugTracker23.Migrations
             }
             #endregion
 
-            
+            #region Seeded Demo Users
+            if (!context.Users.Any(u => u.Email == "DemoAdmin@bugtracker23.com"))
+            {
+                userManager.Create(new ApplicationUser()
+                {
+                    Email = "DemoAdmin@bugtracker23.com",
+                    UserName = "DemoAdmin@bugtracker23.com",
+                    FirstName = "Demo",
+                    LastName = "Admin",
+                    DisplayName = "Demo Admin"
+                }, "Wellne$$23");
+
+                var userId = userManager.FindByEmail("DemoAdmin@bugtracker23.com").Id;
+                userManager.AddToRole(userId, "Administrator");
+            }
+
+            if (!context.Users.Any(u => u.Email == "DemoProjectManager@bugtracker23.com"))
+            {
+                userManager.Create(new ApplicationUser()
+                {
+                    Email = "DemoProjectManager@bugtracker23.com",
+                    UserName = "DemoProjectManager@bugtracker23.com",
+                    FirstName = "Demo",
+                    LastName = "ProjectManager",
+                    DisplayName = "Demo Project Manager"
+                }, "Wellne$$23");
+
+                var userId = userManager.FindByEmail("DemoProjectManager@bugtracker23.com").Id;
+                userManager.AddToRole(userId, "Project Manager");
+            }
+
+            if (!context.Users.Any(u => u.Email == "DemoSubmitter@bugtracker23.com"))
+            {
+                userManager.Create(new ApplicationUser()
+                {
+                    Email = "DemoSubmitter@bugtracker23.com",
+                    UserName = "DemoSubmitter@bugtracker23.com",
+                    FirstName = "Demo",
+                    LastName = "Submitter",
+                    DisplayName = "Demo Submitter"
+                }, "Wellne$$23");
+
+                var userId = userManager.FindByEmail("DemoSubmitter@bugtracker23.com").Id;
+                userManager.AddToRole(userId, "Submitter");
+            }
+
+            if (!context.Users.Any(u => u.Email == "DemoDeveloper@bugtracker23.com"))
+            {
+                userManager.Create(new ApplicationUser()
+                {
+                    Email = "DemoDeveloper@bugtracker23.com",
+                    UserName = "DemoDeveloper@bugtracker23.com",
+                    FirstName = "Demo",
+                    LastName = "Developer",
+                    DisplayName = "Demo Developer"
+                }, "Wellne$$23");
+
+                var userId = userManager.FindByEmail("DemoDeveloper@bugtracker23.com").Id;
+                userManager.AddToRole(userId, "Developer");
+            }
+
+
+
+
+            #endregion
+
+
             context.SaveChanges();
+
+
+
             #region TicketType Seed
             context.TicketTypes.AddOrUpdate(
                 tt => tt.Name,
@@ -316,6 +385,7 @@ namespace BugTracker23.Migrations
                 new TicketPriority() { Name = "Other" }
                 );
             #endregion
+
             #region Ticket Status Seed
             context.TicketStatus.AddOrUpdate(
                 tt => tt.Name,

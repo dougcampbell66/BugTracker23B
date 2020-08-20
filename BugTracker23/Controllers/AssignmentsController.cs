@@ -68,14 +68,11 @@ namespace BugTracker23.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ManageProjectUsers(List<string> userIds, List<int> projectIds)
         {
-
             //Case 1: NO Users and No Projects
             if (userIds == null && projectIds == null)
             {
-                //BookMark added
                 return RedirectToAction("ManageProjectUsers");
             }
-
             //Iterate over each user and them to each of the projects
             foreach (var userId in userIds)
             {
