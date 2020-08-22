@@ -19,8 +19,5 @@ namespace BugTracker23.ViewModels
             DeveloperIds = new HashSet<string>();
             SubmitterIds = new HashSet<string>();
         }
-
-
-
     }
 }

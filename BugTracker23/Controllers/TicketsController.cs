@@ -13,20 +13,44 @@ using Microsoft.AspNet.Identity;
 
 namespace BugTracker23.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class TicketsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private ProjectHelper projectHelper = new ProjectHelper();
         private RoleHelper roleHelper = new RoleHelper();
-        //private TicketHelper ticketHelper = new TicketHelper();
+        private TicketHelper ticketHelper = new TicketHelper();
 
         // GET: Tickets
         public ActionResult Index()
         {
-            var tickets = db.Tickets.Include(t => t.Developer).Include(t => t.Project).Include(t => t.Submitter).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-            return View(tickets.ToList());
+            //Video from 8/10 at 1:13
+            var userId = User.Identity.GetUserId();
+            var myRole = roleHelper.ListUserRoles(userId).FirstOrDefault();
+            List<Ticket> model = new List<Ticket>();
+            switch (myRole)
+            {
+                case "Administrator":
+                    model = db.Tickets.ToList();
+                    break;
+                case "Project Manager":
+                case "Developer":
+                    model = projectHelper.ListUserProjects(userId).SelectMany(p => p.Tickets).ToList();
+                    break;
+                case "Submitter":
+                    model = db.Tickets.Where(t => t.SubmitterId == userId).ToList();
+                    break;
+                default:
+                    return RedirectToAction("Index", "Home");
+            }
+            return View(model);
         }
+
+
+
+        //var tickets = db.Tickets.Include(t => t.Developer).Include(t => t.Project).Include(t => t.Submitter).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
+        //return View(tickets.ToList());
+        //}
         //Added on 8/13/2020 with Drew - Viewing Tickets by Project
         public ActionResult GetProjectTickets()
         {
@@ -74,18 +98,20 @@ namespace BugTracker23.Controllers
         }
 
         // GET: Tickets/Create
-        [Authorize(Roles = "Submitter")]
+        [Authorize(Roles = "Administrator, Submitter")]
         public ActionResult Create()
         {
 
             var userId = User.Identity.GetUserId();
             if (userId == null)
+            {
+                return RedirectToAction("Index");
+            }
 
             ViewBag.DeveloperId = new SelectList(db.Users, "Id", "FirstName");
             ViewBag.ProjectId = new SelectList(projectHelper.ListUserProjects(userId), "Id", "Name");
-            ViewBag.SubmitterId = new SelectList(db.Users, "Id", "FirstName");
+            ViewBag.SubmitterId = new SelectList(db.Users, "Id", "Name");
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name");
-            ViewBag.TicketStatusId = new SelectList(db.TicketStatus, "Id", "Name");
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name");
             return View();
         }
@@ -93,24 +119,26 @@ namespace BugTracker23.Controllers
         // POST: Tickets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = "Administrator, Submitter")]
+        [Authorize(Roles = "Submitter")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,SubmitterId,DeveloperId,Title,Description,Created,Updated,IsResolved,IsArchived")] Ticket ticket)
+        public ActionResult Create([Bind(Include = "Id,ProjectId,TicketPriorityId,TicketTypeId,Title,Description")] Ticket ticket)
         {
             var userId = User.Identity.GetUserId();
             if (ModelState.IsValid)
             {
+                ticket.Created = DateTime.Now;
                 ticket.TicketStatusId = db.TicketStatus.Where(ts => ts.Name == "Open").FirstOrDefault().Id;
                 ticket.SubmitterId = userId;
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                
+                return RedirectToAction("Index");//Best for allowing user to create a ticket outside of a project;
+                //return RedirectToAction("Details", "Projects", new {id = ticket.ProjectId}); //Best for enforcing ticket creation from inside a project view;
             }
 
             ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", ticket.ProjectId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
-            ViewBag.TicketStatusId = new SelectList(db.TicketStatus, "Id", "Name", ticket.TicketStatusId);
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
             return View(ticket);
         }
@@ -149,6 +177,7 @@ namespace BugTracker23.Controllers
             //    var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
             //    db.Entry(ticket).State = EntityState.Modified;
             //    db.SaveChanges();
+
             //    var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
             //    ticketHelper.EditedTicket(oldTicket, newTicket);
             //    return RedirectToAction("Index");
@@ -165,31 +194,7 @@ namespace BugTracker23.Controllers
             return View(ticket);
         }
 
-        // GET: Tickets/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Ticket ticket = db.Tickets.Find(id);
-            if (ticket == null)
-            {
-                return HttpNotFound();
-            }
-            return View(ticket);
-        }
-
-        // POST: Tickets/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Ticket ticket = db.Tickets.Find(id);
-            db.Tickets.Remove(ticket);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+        // GET: Tickets/Delete/5 Project specifies that tickets can not be deleted;
 
         protected override void Dispose(bool disposing)
         {

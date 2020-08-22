@@ -43,9 +43,9 @@
         <th>
             @Html.DisplayName("Role")
         </th>
-        @*<th>
+        <th>
             @Html.DisplayName("Projects")
-        </th>*@
+        </th>
 
     </tr>
 
@@ -58,18 +58,13 @@
     <td>
         @roleHelper.ListUserRoles(person.Id).FirstOrDefault()
     </td>
-    <!--<td>
-        @projectHelper.ListUserProjects(person.Id).FirstOrDefault()
-
-
-    </td>-->
-    @*<td>
-        @foreach (var project in projHelper.ListUserProjects(user.Id))
+    <td>
+        @foreach (var project in projectHelper.ListUserProjects(person.Id))
         {
             @project.Name <br />
         }
 
-    </td>*@
+    </td>
 
 </tr>
     }

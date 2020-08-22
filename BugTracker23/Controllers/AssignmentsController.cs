@@ -54,6 +54,7 @@ namespace BugTracker23.Controllers
         #endregion
 
         #region Project Assignments
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult ManageProjectUsers()
         {
             //I want to List Boxes in my View...therefore I want to load up 2 multi Select Lists

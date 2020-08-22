@@ -10,6 +10,7 @@ using BugTracker23.Models;
 using BugTracker23.Helpers;
 using BugTracker23.ViewModels;
 
+
 namespace BugTracker23.Controllers
 {
     public class ProjectsController : Controller
@@ -37,6 +38,9 @@ namespace BugTracker23.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name");
+            ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name");
+
             return View(project);
         }
 
@@ -66,6 +70,7 @@ namespace BugTracker23.Controllers
         }
         // POST: Projects Wizard/Create
         #region : Project Wizard View Model
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult ProjectWizard()
         {
             ViewBag.ProjectManagerId = new SelectList(roleHelper.UsersInRole("Project Manager"), "Id", "Email");
@@ -97,8 +102,8 @@ namespace BugTracker23.Controllers
             if (ViewBag.Errors.Length > 0)
             {
                 ViewBag.ProjectManagerId = new SelectList(roleHelper.UsersInRole("Project Manager"), "Id", "Email");
-                ViewBag.DeveloperIds = new MultiSelectList(roleHelper.UsersInRole("Developer"), "Id", "Email");
                 ViewBag.SubmitterIds = new MultiSelectList(roleHelper.UsersInRole("Submitter"), "Id", "Email");
+                ViewBag.DeveloperIds = new MultiSelectList(roleHelper.UsersInRole("Developer"), "Id", "Email");
 
                 return View(model);
             }
@@ -154,6 +159,7 @@ namespace BugTracker23.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Edit([Bind(Include = "Id,Name,Created,IsArchived")] Project project)
         {
             if (ModelState.IsValid)
@@ -168,6 +174,7 @@ namespace BugTracker23.Controllers
         }
 
         // GET: Projects/Delete/5
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -185,6 +192,7 @@ namespace BugTracker23.Controllers
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult DeleteConfirmed(int id)
         {
             Project project = db.Projects.Find(id);

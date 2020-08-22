@@ -209,6 +209,7 @@
     <Compile Include="Models\TicketType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\DashboardVM.cs" />
     <Compile Include="ViewModels\ProjectWizardVM.cs" />
     <Compile Include="ViewModels\SwitchCaseVM.cs" />
   </ItemGroup>
@@ -4203,6 +4204,8 @@
     <Content Include="Scripts\scss\widgets.scss" />
     <Content Include="Views\Assignments\Index.cshtml" />
     <Content Include="Views\Projects\ProjectWizard.cshtml" />
+    <Content Include="Views\Projects\ProjectWizardIndex.cshtml" />
+    <Content Include="Views\Tickets\GetMyTickets.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

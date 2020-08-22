@@ -17,32 +17,32 @@
 </style>
 
 <h2>Manage Project Users</h2>
-
-@using (Html.BeginForm())
 {
-    @Html.AntiForgeryToken()
+    using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
 
-    <div class="row">
-        <div class="col-6">
-            <h2>Select Users</h2>
-            @Html.ListBox("UserIds")
+        <div class="row">
+            <div class="col-6">
+                <h2>Select Users</h2>
+                @Html.ListBox("UserIds")
+            </div>
+            <div class="col-6">
+                <h2>Select Projects</h2>
+                @Html.ListBox("ProjectIds")
+            </div>
         </div>
-        <div class="col-6">
-            <h2>Select Projects</h2>
-            @Html.ListBox("ProjectIds")
+
+        <div class="row">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-warning btn-Wide">Assign Users</button>
+            </div>
         </div>
-    </div>
+    }
 
-    <div class="row">
-        <div class="col-md-12">
-            <button type="submit" class="btn btn-warning btn-Wide">Assign Users</button>
-        </div>
-    </div>
-}
+    <hr />
 
-<hr />
-
-<table class="table">
+    <table class="table">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.Email)
@@ -56,23 +56,30 @@
 
     @foreach (var user in Model)
     {
-    <tr>
-        <td>
-         @Html.DisplayFor(modelItem => user.Email)
-        </td>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => user.Email)
+            </td>
 
 
-        <td>
-            @foreach(var project in projHelper.ListUserProjects(user.Id))
-        {
-            @project.Name <br />
-        }
+            <td>
+                @foreach (var project in projHelper.ListUserProjects(user.Id))
+                {
+                    @project.Name <br />
+                }
 
-        </td>
-    </tr>
+            </td>
+        </tr>
     }
 
-</table>
+    </table>
+}
+else
+{
+    <hr />
+    <h4>You must be an Administrator to view this page</h4>
+
+}
 
 
 

@@ -26,6 +26,7 @@ namespace BugTracker23.Helpers
     #endregion
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private RoleHelper roleHelper = new RoleHelper();
 
         #region : Is User on Project
         public bool IsUserOnProject(string userId, int projectId)
@@ -91,5 +92,20 @@ namespace BugTracker23.Helpers
             return db.Users.Where(u => u.Projects.All(p => p.Id != projectId)).ToList();
         }
         #endregion
+
+        public ICollection<ApplicationUser> ListUsersOnProjectinRole(int projectId, string Role)
+        {
+            var userList = UsersOnProject(projectId);
+            var resultList = new List<ApplicationUser>();
+            foreach (var user in userList)
+            {
+                if (roleHelper.IsUserInRole(user.Id,Role))
+                {
+                    resultList.Add(user);
+                };
+            };
+            return (resultList);
+        }
+
     }
 }
