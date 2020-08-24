@@ -1,0 +1,90 @@
+﻿@using BugTracker23.Helpers
+@model IEnumerable<BugTracker23.Models.ApplicationUser>
+@{
+    ViewBag.Title = "ManageProjectUsers";
+    var projHelper = new ProjectHelper();
+    var roleHelper = new RoleHelper();
+
+}
+<style>
+    #UserIds {
+        min-height: 250px;
+    }
+</style>
+<style>
+    #ProjectIds {
+        min-height: 250px;
+    }
+</style>
+<style>
+    .btnWide {
+        width: 100%
+    }
+</style>
+
+<h2>Manage Project Users</h2>
+
+@Html.AntiForgeryToken()
+
+<div class="row">
+    <div class="col-6">
+        <h2>Select Users</h2>
+        @Html.ListBox("UserIds")
+    </div>
+    <div class="col-6">
+        <h2>Select Projects</h2>
+        @Html.ListBox("ProjectIds")
+    </div>
+</div>
+<br />
+
+<div class="row">
+    <div class="col-md-12">
+        <button type="submit" class="btn btn-warning btn-Wide">Assign Users</button>
+    </div>
+</div>
+
+<hr />
+
+<table class="table text-white-50">
+    <tr>
+        <th>Name</th>
+
+        <th>Email</th>
+
+        <th>Role</th>
+
+        <th>Projects</th>
+
+    </tr>
+
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => user.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => user.Email)
+            </td>
+            <td>
+                @roleHelper.ListUserRoles(user.Id).FirstOrDefault()
+            </td>
+
+            <td>
+                @foreach (var project in projHelper.ListUserProjects(user.Id))
+                {
+                    @project.Name <br />
+                }
+
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+
+
+
+

@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using BugTracker23.Helpers;
 using BugTracker23.Models;
+using BugTracker23.ViewModels;
 using Microsoft.AspNet.Identity;
 
 namespace BugTracker23.Controllers
@@ -20,37 +21,22 @@ namespace BugTracker23.Controllers
         private ProjectHelper projectHelper = new ProjectHelper();
         private RoleHelper roleHelper = new RoleHelper();
         private TicketHelper ticketHelper = new TicketHelper();
+        private TicketManager ticketManager = new TicketManager();
 
-        // GET: Tickets
+        #region// GET: All Tickets and Get All My Tickets
+        [Authorize]
         public ActionResult Index()
         {
-            //Video from 8/10 at 1:13
-            var userId = User.Identity.GetUserId();
-            var myRole = roleHelper.ListUserRoles(userId).FirstOrDefault();
-            List<Ticket> model = new List<Ticket>();
-            switch (myRole)
-            {
-                case "Administrator":
-                    model = db.Tickets.ToList();
-                    break;
-                case "Project Manager":
-                case "Developer":
-                    model = projectHelper.ListUserProjects(userId).SelectMany(p => p.Tickets).ToList();
-                    break;
-                case "Submitter":
-                    model = db.Tickets.Where(t => t.SubmitterId == userId).ToList();
-                    break;
-                default:
-                    return RedirectToAction("Index", "Home");
-            }
-            return View(model);
+            //I want to show all Tickets AND my Tickets - Jason 8-11-2020
+            //Created and Using MyTicketVM
+            var myTicketVM = new MyTicketVM();
+            myTicketVM.AllTickets = db.Tickets.ToList();
+            myTicketVM.MyTickets = ticketManager.GetMyTickets();
+            return View(myTicketVM);
         }
+        #endregion
 
-
-
-        //var tickets = db.Tickets.Include(t => t.Developer).Include(t => t.Project).Include(t => t.Submitter).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-        //return View(tickets.ToList());
-        //}
+        #region // GET: All Tickets by Project
         //Added on 8/13/2020 with Drew - Viewing Tickets by Project
         public ActionResult GetProjectTickets()
         {
@@ -60,6 +46,9 @@ namespace BugTracker23.Controllers
             ticketList = user.Projects.SelectMany(p => p.Tickets).ToList();
             return View("Index", ticketList);
         }
+        #endregion
+
+        #region//GET: All My Tickets by Project
         //Added on 8/13/2020 with Drew - Viewing MyTickets by Project
         public ActionResult GetMyTickets()
         {
@@ -80,6 +69,7 @@ namespace BugTracker23.Controllers
                 return RedirectToAction("GetProjectTickets");
             }
         }
+        #endregion
 
         // GET: Tickets/Details/5
         [Authorize(Roles = "Administrator, Submitter")]

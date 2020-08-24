@@ -35,37 +35,28 @@
 
 <hr />
 
-<table class="table">
+<table class="table text-white-50">
     <tr>
-        <th>
-            @Html.DisplayName("User Email")
-        </th>
-        <th>
-            @Html.DisplayName("Role")
-        </th>
-        <th>
-            @Html.DisplayName("Projects")
-        </th>
-
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Projects</th>
     </tr>
 
     @foreach (var person in Model)
     {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => person.Email)
-    </td>
-    <td>
-        @roleHelper.ListUserRoles(person.Id).FirstOrDefault()
-    </td>
-    <td>
-        @foreach (var project in projectHelper.ListUserProjects(person.Id))
+    <tr>
+        <td>
+        @Html.DisplayFor(modelItem => person.FullName)</td>
+        <td>@Html.DisplayFor(modelItem => person.Email)</td>
+        <td>@roleHelper.ListUserRoles(person.Id).FirstOrDefault()</td>
+        <td>
+            @foreach (var project in projectHelper.ListUserProjects(person.Id))
         {
             @project.Name <br />
         }
-
-    </td>
-
-</tr>
+        </td>
+    </tr>
     }
 </table>
+
