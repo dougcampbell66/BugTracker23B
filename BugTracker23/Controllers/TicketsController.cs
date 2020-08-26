@@ -26,6 +26,7 @@ namespace BugTracker23.Controllers
         #region// GET: All Tickets and Get All My Tickets
         [Authorize]
         public ActionResult Index()
+        
         {
             //I want to show all Tickets AND my Tickets - Jason 8-11-2020
             //Created and Using MyTicketVM
@@ -34,6 +35,28 @@ namespace BugTracker23.Controllers
             myTicketVM.MyTickets = ticketManager.GetMyTickets();
             return View(myTicketVM);
         }
+        //Alternative Method but not using myTicketVM via Drew
+        //{
+        //    var userId = User.Identity.GetUserId();
+        //    var myRole = roleHelper.ListUserRoles(userId).FirstOrDefault();
+        //    List<Ticket> model = new List<Ticket>();
+        //    switch (myRole)
+        //    {
+        //        case "Administrator":
+        //            model = db.Tickets.ToList();
+        //            break;
+        //        case "Project Manager":
+        //        case "Developer":
+        //            model = projectHelper.ListUserProjects(userId).SelectMany(p => p.Tickets).ToList();
+        //            break;
+        //        case "Submitter":
+        //            model = db.Tickets.Where(t => t.SubmitterId == userId).ToList();
+        //            break;
+        //        default:
+        //            return RedirectToAction("Index", "Home");
+        //    }
+        //    return View(model);
+        //}
         #endregion
 
         #region // GET: All Tickets by Project
@@ -42,9 +65,9 @@ namespace BugTracker23.Controllers
         {
             var userId = User.Identity.GetUserId();
             var user = db.Users.Find(userId);
-            var ticketList = new List<Ticket>();
-            ticketList = user.Projects.SelectMany(p => p.Tickets).ToList();
-            return View("Index", ticketList);
+            var myTicketVM = new MyTicketVM();
+            myTicketVM.AllTickets = user.Projects.SelectMany(p => p.Tickets).ToList();
+            return View("Index", myTicketVM);
         }
         #endregion
 
@@ -162,21 +185,21 @@ namespace BugTracker23.Controllers
         public ActionResult Edit([Bind(Include = "Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,SubmitterId,DeveloperId,Title,Description,Created,Updated,IsResolved,IsArchived")] Ticket ticket)
         {
             if (ModelState.IsValid)
-            //{
-            //    //Go out and get an unedited copy of the ticket from the DB
-            //    var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
-            //    db.Entry(ticket).State = EntityState.Modified;
-            //    db.SaveChanges();
+            {
+                //Go out and get an unedited copy of the ticket from the DB
+                var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
+                db.Entry(ticket).State = EntityState.Modified;
+                db.SaveChanges();
 
-            //    var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
-            //    ticketHelper.EditedTicket(oldTicket, newTicket);
-            //    return RedirectToAction("Index");
+                //var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
+                //ticketHelper.EditedTicket(oldTicket, newTicket);
+                //return RedirectToAction("Index");
 
-            //    //Somehow compare my old Ticket with the new Ticket to make any number of decisions that might be required;
-            //    var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
-            //    ticketHelper.ManageTicketNotifications(oldTicket, newTicket);
-            //    return RedirectToAction("Index");
-            //}
+                //Somehow compare my old Ticket with the new Ticket to make any number of decisions that might be required;
+                //var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
+                //ticketHelper.ManageTicketNotifications(oldTicket, newTicket);
+                //return RedirectToAction("Index");
+            }
             ViewBag.ProjectId = new SelectList(db.Users, "Id", "FirstName", ticket.DeveloperId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatus, "Id", "Name", ticket.TicketStatusId);
